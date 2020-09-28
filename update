@@ -1,0 +1,73 @@
+U-Boot> erase 0x10000000 0x1003ffff 
+U-Boot> loady 0x21000000
+U-Boot> cp.b 0x21000000 0x10000000 0x40000
+
+
+boot# ip address 192.168.10.124
+
+boot# copy tftp CZ9260-M28_v1.0.2e.img 192.168.10.3 flash uboot
+
+boot# copy tftp CZ9260_M28_v1.1.0a_c0_l0.img 192.168.10.3 flash
+
+boot# tftpboot 0x21000000 192.168.19.3:uImage
+
+boot# bootm 0x21000000
+
+Marvell>> ppSleedBoardNetworkConfig
+Marvell>> ping 192.168.19.3
+Marvell>> tftpboot 0x03000000 uImage
+Marvell>> tftpboot 0x03000000 jffs2_arm.image.out
+Marvell>> bootm 0x03000000
+
+Marvell>> mvburn u-boot.bin boot
+Marvell>> mvburn u-boot.bin.jffs2 boot
+Marvell>> mvburn uImage kernel
+Marvell>> mvburn fs.bin fs
+Marvell>> mvburn demo_jffs2.bin fs
+
+Marvell>> mvburn MV3035_M28_1.0.0a_CN.img all
+
+# ifconfig mux0 192.168.19.4
+# ping 192.168.19.3
+
+Marvell>> cp.b 0xf80b0000 0x03000000 0x700000
+Marvell>> bootm 0x03000000
+Monitor>> bubt u-boot.bin
+
+Marvell>> setenv ethprime ppmii
+Marvell>> setenv eth1addr 00:11:22:33:44:55
+Marvell>> mvburn u-boot.bin boot
+
+Marvell>> setenv ethprime egiga0
+Marvell>> saveenv
+Marvell>> reset
+ping 192.168.19.3
+
+regs read 0x0a80fc10
+regs read 0x0a80000c
+spi_ioctl:6240: read 0x0a80000c val 0xb0e8
+read 0x0a80000c val 0xb0e8
+# regs w  0x0a80000c 0xb0ea
+
+setenv linux_parts mtdparts=spi_flash:0xe0000(uboot)ro,0x00300000(kernel),0x00420000(rootfs)
+
+setenv standalone_mtd 'setenv bootargs root=/dev/mtdblock2 rw rootfstype=jffs2 ip=$(ipaddr):$(serverip):$(gatewayip):$(netmask):$(hostname):$(netdev):off console=$(consoledev),$(baudrate) $(othbootargs) $(linux_parts); bootm 0xf80e0000'
+
+cp.b 0xf80e0000 0x03000000 0x001c0000; bootm 0x03000000
+
+setenv bootargs console=ttyS0,115200 root=/dev/mtdblock2 rootfstype=jffs2 mem=128M init=/sbin/init mtdparts=spi_flash:0x100000(uboot)ro,0x001c0000(kernel),0x00800000(rootfs)
+savenv
+bootm 0xf8100000
+
+ftp 192.168.19.3 21
+get appDemo
+
+
+Marvell>> mvburn u-boot.bin boot
+mvEgigaHalt: egiga0 halt - mvEgigaHalt: egiga0 complete
+mvEgigaInit: egiga0 init - mvBoardPhyAddrGet()=0x0 , priv->port =0x0
+mvEgigaInit: egiga0 init phy id 0x0141
+mvEgigaInit: egiga0 init phy id 0x0dd1
+phy0: ETH_PHY_STATUS_REG 0x7949
+phy0: ETH_PHY_CTRL_REG 0x7949
+phy0: ETH_PHY_SPEC_STATUS_REG 0x7949

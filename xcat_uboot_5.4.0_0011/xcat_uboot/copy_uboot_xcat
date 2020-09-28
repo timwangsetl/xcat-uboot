@@ -1,0 +1,38 @@
+#!/bin/sh
+
+#
+# >>> Now we build only LE uboot <<<<<
+# To config:
+# make mrproper
+#
+#
+# spi flash:
+#  for dbx_xcat_a1_24fe
+#   make xCat_total_build_spi_endian LE=1 TOOLCHAIN=3.2
+#
+# nand flash:
+#  for dbx_xcat_a1_24fe
+#    make db_xcat_a1_nand_config (?? gc)
+#
+#
+
+rm -f u-boot* ${tmpf}
+make 
+
+ls *nand.bin > /dev/null 2>&1
+if [ $? -eq 0 ]; then
+  type=nand ??
+else
+  type=spi
+fi
+
+#
+## the following two lines are a working example. Fix as needed
+#
+#cp  u-boot*_${type}.bin /tftpboot/u-boot.bin
+#cp  u-boot.bin /tftpboot/u-boot.bin
+cp u-boot-1.1.4-xCat98DX-320MHz-spi.bin /tftpboot/u-boot.bin
+#scp /tftpboot/u-boot.bin root@10.5.70.28:/tftpboot
+echo "done"
+echo
+

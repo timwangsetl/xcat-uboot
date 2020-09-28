@@ -1,0 +1,5 @@
+1.get the bin file, you can get the "u-boot.bin" under ../binfile
+make
+
+2.clean the compile
+make clean
